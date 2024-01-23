@@ -2,18 +2,19 @@
 
 //config
 define('BASE_PATH', dirname(__DIR__));
-define('DISPLAY_ERROR', true);
-define('CURRENT_DOMAIN', trim(currentDomain(), '/') . '');
-define('DB_HOST', 'localhost');
-define('DB_USERNAME', 'root');
-define('DB_NAME', '');
-define('DB_PASSWORD', '');
+const DISPLAY_ERROR = true;
+//define('CURRENT_DOMAIN', trim(currentDomain(), '/'));
+const DB_HOST = 'localhost';
+const DB_USERNAME = 'root';
+const DB_NAME = 'php_shop';
+const DB_PASSWORD = '';
+const DB_DRIVER = 'mysql';
 
 //mail config
-define('MAIL_HOST', 'smtp.gmail.com');
-define('SMTP_AUTH', true);
-define('MAIL_USERNAME', '');
-define('MAIL_PASSWORD', '');
-define('MAIL_PORT', 587);
-define('SENDER_MAIL', '');
-define('SENDER_NAME', 'دوره پی اچ پی');
+const MAIL_HOST = 'smtp.gmail.com';
+const SMTP_AUTH = true;
+const MAIL_USERNAME = '';
+const MAIL_PASSWORD = '';
+const MAIL_PORT = 587;
+const SENDER_MAIL = '';
+const SENDER_NAME = 'دوره پی اچ پی';

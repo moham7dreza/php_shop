@@ -1,6 +1,7 @@
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
 
-require_once './config.php';
+require_once __DIR__ . '/config/bootstrap.php';
 
 session_start();
 
@@ -21,14 +22,11 @@ require_once 'database/Database.php';
 require_once 'activities/Admin/Admin.php';
 
 
-
 //require Auth
 require_once 'activities/Auth/Auth.php';
 
 
 //require App
-
-
 
 
 //helpers
