@@ -1,6 +1,6 @@
 <?php
 
-use Activities\Auth\Auth;
+require_once './config.php';
 
 session_start();
 

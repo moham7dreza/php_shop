@@ -1,0 +1,20 @@
+{
+    "name": "memoh/php-base",
+    "type": "project",
+    "require": {
+        "php": "^8.1",
+        "illuminate/database": "11.x-dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Memoh\\PhpBase\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mohamadreza Rezaei",
+            "email": "clash.trial@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
