@@ -1,7 +1,5 @@
 <?php
-require_once __DIR__ . '/vendor/autoload.php';
-
-require_once __DIR__ . '/config/bootstrap.php';
+require_once 'vendor/autoload.php';
 
 session_start();
 
@@ -20,6 +18,7 @@ require_once 'database/Database.php';
 
 //require admin class
 require_once 'activities/Admin/Admin.php';
+require_once 'activities/Admin/Dashboard.php';
 
 
 //require Auth
@@ -32,6 +31,7 @@ require_once 'activities/Auth/Auth.php';
 //helpers
 require_once 'helpers/helper.php';
 
+require_once 'config/bootstrap.php';
 
 //routing
 require_once 'routes/web.php';

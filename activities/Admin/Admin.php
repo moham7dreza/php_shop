@@ -2,8 +2,6 @@
 
 namespace Activities\Admin;
 
-use Activities\Auth\Auth;
-
 
 class Admin
 {
@@ -12,8 +10,8 @@ class Admin
 
     function __construct()
     {
-        $auth = new Auth();
-        $auth->checkAdmin();
+//        $auth = new Auth();
+//        $auth->checkAdmin();
         $this->currentDomain = CURRENT_DOMAIN;
         $this->basePath = BASE_PATH;
     }

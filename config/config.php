@@ -3,7 +3,7 @@
 //config
 define('BASE_PATH', dirname(__DIR__));
 const DISPLAY_ERROR = true;
-//define('CURRENT_DOMAIN', trim(currentDomain(), '/'));
+define('CURRENT_DOMAIN', trim(currentDomain(), '/'));
 const DB_HOST = 'localhost';
 const DB_USERNAME = 'root';
 const DB_NAME = 'php_shop';
