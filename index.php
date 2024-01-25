@@ -15,10 +15,15 @@ spl_autoload_register(function ($className) {
 //database required
 require_once 'database/Database.php';
 
+// models required
+require_once 'models/PostCategory.php';
+
 
 //require admin class
 require_once 'activities/Admin/Admin.php';
 require_once 'activities/Admin/Dashboard.php';
+// content
+require_once 'activities/Admin/Content/PostCategory.php';
 
 
 //require Auth

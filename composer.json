@@ -1,21 +1,21 @@
 {
-    "name": "memoh/php-base",
-    "type": "project",
-    "require": {
-        "php": "^8.3",
-        "illuminate/database": "11.x-dev",
-      "ext-intl": "*"
-    },
-    "autoload": {
-        "psr-4": {
-            "Memoh\\PhpBase\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Mohamadreza Rezaei",
-            "email": "clash.trial@gmail.com"
-        }
-    ],
-    "minimum-stability": "dev"
+  "name": "memoh/php-base",
+  "type": "project",
+  "require": {
+    "php": "^8.3",
+    "illuminate/database": "11.x-dev",
+    "ext-intl": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Memoh\\PhpBase\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Mohamadreza Rezaei",
+      "email": "clash.trial@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev"
 }

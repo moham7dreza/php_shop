@@ -17,4 +17,4 @@ const MAIL_USERNAME = '';
 const MAIL_PASSWORD = '';
 const MAIL_PORT = 587;
 const SENDER_MAIL = '';
-const SENDER_NAME = 'دوره پی اچ پی';
+const SENDER_NAME = 'فروشگاه';

@@ -9,7 +9,7 @@ try {
         'driver' => DB_DRIVER,
         'host' => DB_HOST,
         'database' => DB_NAME,
-        'username' => DB_HOST,
+        'username' => DB_USERNAME,
         'password' => DB_PASSWORD,
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',

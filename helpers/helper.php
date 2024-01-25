@@ -2,6 +2,8 @@
 
 
 //require configuration
+use JetBrains\PhpStorm\NoReturn;
+
 require_once 'config/config.php';
 
 function uri($reservedUrl, $class, $method, $methodField = "GET")
@@ -29,7 +31,7 @@ function uri($reservedUrl, $class, $method, $methodField = "GET")
     $parameters = [];
     for ($key = 0; $key < sizeof($currentUrlArray); $key++) {
         if ($reservedUrlArray[$key][0] == '{' && $reservedUrlArray[$key][strlen($reservedUrlArray[$key]) - 1] == '}') {
-            array_push($parameters, $currentUrlArray[$key]);
+            $parameters[] = $currentUrlArray[$key];
         } elseif ($currentUrlArray[$key] !== $reservedUrlArray[$key]) {
             return false;
         }
@@ -45,35 +47,35 @@ function uri($reservedUrl, $class, $method, $methodField = "GET")
     exit;
 }
 
-function protocol()
+function protocol(): string
 {
-    return stripos($_SERVER['SERVER_PROTOCOL'], 'https') == true ? 'https://' : 'http://';
+    return stripos($_SERVER['SERVER_PROTOCOL'], 'https') ? 'https://' : 'http://';
 }
 
 // echo protocol();
 
-function currentDomain()
+function currentDomain(): string
 {
     return protocol() . $_SERVER['HTTP_HOST'];
 }
+
 // echo trim(CURRENT_DOMAIN, '/');
 
-function asset($src)
+function asset($src): string
 {
     $domain = trim(CURRENT_DOMAIN, '/ ');
-    $src = $domain . '/' . trim($src, '/ ');
-    return $src;
+    return $domain . '/' . trim($src, '/ ');
 }
+
 // echo asset('admin/style.css');
 
-function url($url)
+function url($url): string
 {
     $domain = trim(CURRENT_DOMAIN, '/ ');
-    $url = $domain . '/' . trim($url, '/ ');
-    return $url;
+    return $domain . '/' . trim($url, '/ ');
 }
 
-function currentUrl()
+function currentUrl(): string
 {
     return currentDomain() . $_SERVER['REQUEST_URI'];
 }
@@ -85,16 +87,16 @@ function methodField()
 
 // echo methodField();
 
-function dd($var)
+#[NoReturn] function dd($var): void
 {
-    echo '<pre>';
+    echo '<pre style="background-color: black; color: springgreen; padding: 10px; font-size: 15px;">';
     var_dump($var);
     exit;
 }
 
 // dd('hi');
 
-function displayError($status)
+function displayError($status): void
 {
     if ($status) {
         ini_set('display_errors', 1);
@@ -119,8 +121,7 @@ function flash($name, $value = null)
 {
     if ($value == null) {
         global $flashMessage;
-        $message = isset($flashMessage[$name]) ? $flashMessage[$name] : '';
-        return $message;
+        return $flashMessage[$name] ?? '';
     } else {
         $_SESSION['flash_message'][$name] = $value;
     }

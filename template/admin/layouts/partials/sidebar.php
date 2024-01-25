@@ -9,7 +9,7 @@
 
             <section class="sidebar-part-title">بخش محتوی</section>
 
-            <a href="#" class="sidebar-link">
+            <a href="<?= url('admin/post-category') ?>" class="sidebar-link">
                 <i class="fas fa-bars"></i>
                 <span>دسته ها</span>
             </a>
