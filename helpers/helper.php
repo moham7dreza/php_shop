@@ -1,9 +1,9 @@
 <?php
 
+use Parsidev\Jalali\jDate;
+
 
 //require configuration
-use JetBrains\PhpStorm\NoReturn;
-
 require_once 'config/config.php';
 
 function uri($reservedUrl, $class, $method, $methodField = "GET")
@@ -31,7 +31,7 @@ function uri($reservedUrl, $class, $method, $methodField = "GET")
     $parameters = [];
     for ($key = 0; $key < sizeof($currentUrlArray); $key++) {
         if ($reservedUrlArray[$key][0] == '{' && $reservedUrlArray[$key][strlen($reservedUrlArray[$key]) - 1] == '}') {
-            $parameters[] = $currentUrlArray[$key];
+            array_push($parameters, $currentUrlArray[$key]);
         } elseif ($currentUrlArray[$key] !== $reservedUrlArray[$key]) {
             return false;
         }
@@ -47,35 +47,35 @@ function uri($reservedUrl, $class, $method, $methodField = "GET")
     exit;
 }
 
-function protocol(): string
+function protocol()
 {
-    return stripos($_SERVER['SERVER_PROTOCOL'], 'https') ? 'https://' : 'http://';
+    return stripos($_SERVER['SERVER_PROTOCOL'], 'https') == true ? 'https://' : 'http://';
 }
 
 // echo protocol();
 
-function currentDomain(): string
+function currentDomain()
 {
     return protocol() . $_SERVER['HTTP_HOST'];
 }
-
 // echo trim(CURRENT_DOMAIN, '/');
 
-function asset($src): string
+function asset($src)
 {
     $domain = trim(CURRENT_DOMAIN, '/ ');
-    return $domain . '/' . trim($src, '/ ');
+    $src = $domain . '/' . trim($src, '/ ');
+    return $src;
 }
-
 // echo asset('admin/style.css');
 
-function url($url): string
+function url($url)
 {
     $domain = trim(CURRENT_DOMAIN, '/ ');
-    return $domain . '/' . trim($url, '/ ');
+    $url = $domain . '/' . trim($url, '/ ');
+    return $url;
 }
 
-function currentUrl(): string
+function currentUrl()
 {
     return currentDomain() . $_SERVER['REQUEST_URI'];
 }
@@ -87,16 +87,16 @@ function methodField()
 
 // echo methodField();
 
-#[NoReturn] function dd($var): void
+function dd($var)
 {
-    echo '<pre style="background-color: black; color: springgreen; padding: 10px; font-size: 15px;">';
+    echo '<pre style="background-color:black;color:springgreen;padding:10px;font-size:15px">';
     var_dump($var);
     exit;
 }
 
 // dd('hi');
 
-function displayError($status): void
+function displayError($status)
 {
     if ($status) {
         ini_set('display_errors', 1);
@@ -121,8 +121,50 @@ function flash($name, $value = null)
 {
     if ($value == null) {
         global $flashMessage;
-        return $flashMessage[$name] ?? '';
+        $message = isset($flashMessage[$name]) ? $flashMessage[$name] : '';
+        return $message;
     } else {
         $_SESSION['flash_message'][$name] = $value;
+    }
+}
+
+
+
+if (isset($_SESSION['old'])) {
+    unset($_SESSION['temporary_old']);
+}
+
+
+if (isset($_SESSION['old'])) {
+    $_SESSION['temporary_old'] = $_SESSION['old'];
+    unset($_SESSION['old']);
+}
+
+$params = [];
+$params = !isset($_GET) ? $params : array_merge($params, $_GET);
+$params = !isset($_POST) ? $params : array_merge($params, $_POST);
+$_SESSION['old'] = $params;
+unset($params);
+
+
+function old($name)
+{
+    if (isset($_SESSION['temporary_old'][$name])) {
+        return $_SESSION['temporary_old'][$name];
+    } else {
+        return null;
+    }
+}
+
+
+
+function jDate($date, $format = null)
+{
+    // return jDate::forge()->format('%B %d، %Y');
+    // return jDate::forge()->format('date');
+    if (!$format) {
+        return jDate::forge($date)->format('date');
+    } else {
+        return jDate::forge($date)->format($format);
     }
 }

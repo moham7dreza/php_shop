@@ -2,74 +2,141 @@
 <html lang="en">
 
 <head>
-    <?= require_once BASE_PATH . '/template/admin/layouts/head-tags.php' ?>
+    <?php
+    require_once BASE_PATH . '/template/admin/layouts/head-tag.php';
+    ?>
     <title>دسته بندی پست ها</title>
 </head>
 
 <body dir="rtl">
 
-<?= require_once BASE_PATH . '/template/admin/layouts/partials/header.php' ?>
+    <?php
+    require_once BASE_PATH . '/template/admin/layouts/partials/header.php';
+    ?>
 
-<section class="body-container">
-    <?= require_once BASE_PATH . '/template/admin/layouts/partials/sidebar.php' ?>
 
-    <section id="main-body" class="main-body">
+    <section class="body-container">
 
-        <section class="row">
-            <section class="col-12">
-                <section class="main-body-container">
-                    <section class="main-body-container-header">
-                        <h5>
-                            دسته بندی پست ها
-                        </h5>
-                        <p>
-                            در این بخش اطلاعاتی در مورد کاربران به شما داده می شود
-                        </p>
-                    </section>
-                    <section class="body-content">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">نام</th>
-                                <th scope="col">توضیحات</th>
-                                <th scope="col">عکس</th>
-                                <th scope="col">وضعیت</th>
-                                <th scope="col">تنظیمات</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <?php foreach ($categories as $category) { ?>
-                                <tr>
-                                    <th scope="row">
-                                        <!--                                    --><?php //= $category->id ?>
-                                    </th>
-                                    <td><?= $category->name ?></td>
-                                    <td><?= $category->description ?></td>
-                                    <td><?= $category->image ?></td>
-                                    <td><?= $category->statusText() ?></td>
-                                    <td>
-                                        <div class="d-flex">
-                                            <div class="mx-2"><a href="" class="text-danger"><i class="fa fa-trash"></i></a>
-                                            </div>
-                                            <div class="mx-2"><a href="" class="text-info"><i
-                                                            class="fa fa-edit"></i></a></div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <?php } ?>
-                            </tbody>
-                        </table>
+        <?php
+        require_once BASE_PATH . '/template/admin/layouts/partials/sidebar.php';
+        ?>
+
+
+        <section id="main-body" class="main-body">
+
+            <section class="row">
+                <section class="col-12">
+                    <?php
+                    require_once BASE_PATH . '/template/admin/layouts/partials/success.php'
+                    ?>
+                    <div class="alert alert-success d-none" id="alert">
+
+                    </div>
+                    <section class="main-body-container">
+                        <section class="main-body-container-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5>
+                                    دسته بندی پست ها
+                                </h5>
+                                <p>
+                                    در این بخش اطلاعاتی در مورد دسته بندی به شما داده می شود
+                                </p>
+                            </div>
+                            <div>
+                                <a href="<?= url('admin/content/post-category/create') ?>" class="btn btn-success">ساخت</a>
+                            </div>
+                        </section>
+                        <section class="body-content">
+
+                            <table class="table">
+                                <thead class="table-info">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">نام</th>
+                                        <th scope="col">توضیحات</th>
+                                        <th scope="col">عکس</th>
+                                        <th scope="col">وضعیت</th>
+                                        <th scope="col">تنظیمات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    foreach ($categories as $category) { ?>
+                                        <tr>
+                                            <th><?= $category['id'] ?></th>
+                                            <td><?= $category['name'] ?></td>
+                                            <td><?= $category['description'] ?></td>
+                                            <td>
+                                                <img src="<?= $category['image'] ?  asset($category['image']) : '' ?>" alt="" width="100" height="100">
+                                            </td>
+                                            <td>
+                                                <select class="form-select status" data-id="<?= $category['id'] ?>">
+                                                    <option value="1" <?php if ($category['status'] == 1)  echo 'selected' ?>> فعال</option>
+                                                    <option value="0" <?php if ($category['status'] == 2)  echo 'selected' ?>>غیر فعال</option>
+                                                </select>
+
+                                            </td>
+                                            <td>
+                                                <div class="d-flex">
+                                                    <div class="mx-2">
+                                                        <a href="<?= url('admin/content/post-category/delete/' . $category['id']) ?>" class="text-danger">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="mx-2">
+                                                        <a href="<?= url('admin/content/post-category/edit/' . $category['id']) ?>" class="text-warning">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+
+                        </section>
                     </section>
                 </section>
             </section>
+
+
+
         </section>
-
-
     </section>
-</section>
 
-<?= require_once BASE_PATH . '/template/admin/layouts/scripts.php' ?>
+
+
+
+
+
+    <?php
+    require_once BASE_PATH . '/template/admin/layouts/scripts.php';
+    ?>
+    <script>
+        const statusBtns = document.querySelectorAll(".status");
+
+        statusBtns.forEach((statusBtn) => {
+            statusBtn.addEventListener("change", (e) => {
+                let targetBtn = e.target;
+                let id = targetBtn.dataset.id;
+
+                fetch(
+                        `http://localhost/php-shop/admin/content/post-category/change-status/${id}`
+                    )
+                    .then((response) => response.json())
+                    .then((result) => {
+                        if (result.status == "ok") {
+                            const alert = document.getElementById("alert");
+                            alert.classList.remove("d-none");
+                            alert.innerHTML = result.message;
+                        }
+                    });
+            });
+        });
+    </script>
+
+
 </body>
 
 </html>

@@ -2,12 +2,36 @@
 
 namespace Activities\Auth;
 
+use Activities\Services\SmsService;
 use Database\Database;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class Auth
 {
+
+    private function generateOtp()
+    {
+        return rand(1000, 9999);
+    }
+
+    private function storeOtp($otpCode, $userId = null)
+    {
+        $db = new Database();
+        $expireAt = date('Y-m-d H:i:s', strtotime('+5 minutes'));
+        $db->insert('user_otps', ['user_id', 'otp_code', 'expired_at'], [$userId, $otpCode, $expireAt]);
+    }
+
+    public function sendOtp($phoneNumber, $userId = null)
+    {
+        $otp = $this->generateOtp();
+        $this->storeOtp($otp, $userId);
+
+        $smsService = new SmsService();
+        $smsService->sendSmsOtp($phoneNumber, $otp);
+    }
+
+
 
     protected function redirect($url)
     {
@@ -42,7 +66,6 @@ class Auth
 
     public function sendMail($emailAddress, $subject, $body)
     {
-
         //Create an instance; passing `true` enables exceptions
         $mail = new PHPMailer(true);
 
@@ -72,43 +95,92 @@ class Auth
         }
     }
 
-    public function register()
+    public function loginRegister()
     {
-        // require_once BASE_PATH . '/template/auth/register.php';
+        require_once BASE_PATH . '/template/auth/login-register.php';
     }
 
-    public function registerStore($request)
+    public function loginRegisterStore($request)
     {
-        // if (empty($request['email']) || empty($request['password']) || empty($request['username'])) {
-        //     flash('register_error', 'تمامی فیلد ها الزامی میباشند');
-        //     $this->redirectBack();
-        // } else if (strlen($request['password']) < 8) {
-        //     flash('register_error', 'رمز عبور نباید کمتر از ۸ کاراکتر باشد');
-        //     $this->redirectBack();
-        // } else if (!filter_var($request['email'], FILTER_VALIDATE_EMAIL)) {
-        //     flash('register_error', 'ایمیل وارد شده صحیح نیست');
-        //     $this->redirectBack();
-        // } else {
-        //     $db = new Database();
-        //     $user = $db->select('SELECT * FROM users WHERE email = ?', [$request['email']])->fetch();
-        //     if ($user != null) {
-        //         flash('register_error', 'ایمیل وارد شده تکراری میباشد');
-        //         $this->redirectBack();
-        //     } else {
-        //         $randomToken = $this->random();
-        //         $activationMessage = $this->activationMessage($request['username'], $randomToken);
-        //         $result = $this->sendMail($request['email'], 'ایمیل فعال سازی', $activationMessage);
-        //         if ($result) {
-        //             $request['verify_token'] = $randomToken;
-        //             $request['password'] = $this->hash($request['password']);
-        //             $db->insert('users', array_keys($request), $request);
-        //             $this->redirect('login');
-        //         } else {
-        //             flash('register_error', 'فرایند ارسال ایمیل با خطا مواجه شد');
-        //             $this->redirectBack();
-        //         }
-        //     }
-        // }
+
+        if (empty($request['mobile']) || !preg_match('/^09\d{9}$/', $request['mobile'])) {
+            flash('input_error', 'شماره وارد شده صحیح نمیباشد');
+            $this->redirectBack();
+            return;
+        }
+
+        $db = new Database();
+        $user = $db->select('select * from users where mobile = ?', [$request['mobile']])->fetch();
+        //register
+
+        if ($user == null) {
+            $request['password'] = $this->hash($this->random());
+            $db->insert('users', ['mobile', 'password'], [$request['mobile'], $request['password']]);
+            $this->sendOtp($request['mobile']);
+            $this->redirect('otp-verify?phoneNumber=' . $request['mobile']);
+        }
+        // login
+        else {
+            $this->sendOtp($request['mobile'], $user['id']);
+            $this->redirect('otp-verify?phoneNumber=' . $request['mobile']);
+        }
+    }
+
+
+    public function verifyOtpView()
+    {
+        require_once BASE_PATH . '/template/auth/otp-verify.php';
+    }
+
+    public function verifyOtp($otpCode, $phoneNumber)
+    {
+
+        $db = new Database();
+
+        $otpRecord = $db->select('select * from user_otps where otp_code = ? AND expired_at > NOW()', [$otpCode])->fetch();
+
+        if ($otpRecord == null) {
+            return false;
+        } else {
+            $db->delete('user_otps', $otpRecord['id']);
+            $user = $db->select('select * from users where mobile = ?', [$phoneNumber])->fetch();
+            if ($user && $user['is_active'] == 0) {
+                $db->update('users', $user['id'], ['is_active'], [1]);
+            }
+
+            return true;
+        }
+    }
+
+    public function verifyOtpStore($request)
+    {
+
+        if (empty($request['otp']) || empty($request['phoneNumber'])) {
+            flash('input_error', 'تمامی فیلد ها الزامی میباشند');
+            $this->redirectBack();
+            return;
+        }
+
+        if (!preg_match('/^09\d{9}$/', $request['phoneNumber'])) {
+            flash('input_error', 'شماره وارد شده صحیح نمیباشد');
+            $this->redirectBack();
+            return;
+        }
+
+        if ($this->verifyOtp($request['otp'], $request['phoneNumber'])) {
+            $db = new Database();
+            $user = $db->select('select * from users where mobile = ?', [$request['phoneNumber']])->fetch();
+            if ($user && $user['is_active'] == 1) {
+                $_SESSION['user'] = $user['id'];
+                $this->redirect('/');
+            } else {
+                $_SESSION['user'] = $user['id'];
+                $this->redirect('/');
+            }
+        } else {
+            flash('otp_error', 'کد وارد شده صحیح نمیباشد');
+            $this->redirectBack();
+        }
     }
 
     public function activation($verify_token)
@@ -159,7 +231,7 @@ class Auth
             unset($_SESSION['user']);
             session_destroy();
         }
-        $this->redirect('login');
+        $this->redirect('login-register');
     }
 
 
@@ -180,4 +252,3 @@ class Auth
         }
     }
 }
-

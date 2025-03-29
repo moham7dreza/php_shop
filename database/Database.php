@@ -38,7 +38,6 @@ class Database
             }
             $result = $stmt;
             return $result;
-
         } catch (PDOException $e) {
             echo 'Error : ' . $e->getMessage();
             exit;
@@ -52,7 +51,8 @@ class Database
         try {
             $stmt = $this->connection->prepare("INSERT INTO " . $tableName . "(" . implode(', ', $fields) . " , created_at) VALUES ( :" . implode(', :', $fields) . " , now() );");
             $stmt->execute(array_combine($fields, $values));
-            return true;
+            $id = $this->connection->lastInsertId();
+            return $id;
         } catch (PDOException $e) {
             echo 'Error : ' . $e->getMessage();
             exit;
@@ -76,7 +76,6 @@ class Database
             $stmt = $this->connection->prepare($sql);
             $stmt->execute(array_merge(array_filter(array_values($values)), [$id]));
             return true;
-
         } catch (PDOException $e) {
             echo 'Error : ' . $e->getMessage();
             exit;
@@ -102,7 +101,6 @@ class Database
         try {
             $this->connection->exec($query);
             return true;
-
         } catch (PDOException $e) {
             echo 'Error : ' . $e->getMessage();
             exit;
