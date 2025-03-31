@@ -7,9 +7,7 @@
     "ext-intl": "*"
   },
   "autoload": {
-    "psr-4": {
-      "Memoh\\PhpBase\\": "src/"
-    }
+    "psr-4": {}
   },
   "authors": [
     {

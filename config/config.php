@@ -6,8 +6,9 @@ define('DISPLAY_ERROR', true);
 define('CURRENT_DOMAIN', trim(currentDomain(), '/') . '/php-shop/');
 define('DB_HOST', 'localhost');
 define('DB_USERNAME', 'root');
-define('DB_NAME', 'php-shop');
+define('DB_NAME', 'shop_php');
 define('DB_PASSWORD', 'password');
+define('DB_DRIVER', 'mysql');
 
 //mail config
 define('MAIL_HOST', 'smtp.gmail.com');
